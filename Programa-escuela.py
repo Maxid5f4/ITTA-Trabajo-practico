@@ -1,8 +1,22 @@
 "Programa para la escuela Amadeo Sirolli"
 
-datos = {
-    "Alumnos": []
-}
+import json
+import os
+
+ARCHIVO = "alumnos.json"
+
+def cargar_datos():
+    if os.path.exists(ARCHIVO):
+        if os.path.getsize(ARCHIVO) == 0:  # Si el archivo está vacío
+            return {"Alumnos": []}
+        with open(ARCHIVO, "r") as f:
+            return json.load(f)
+    else:
+        return {"Alumnos": []}
+
+def guardar_datos(datos):
+    with open(ARCHIVO, "w") as f:
+        json.dump(datos, f, indent=4)
 
 def mostrar_alumnos(datos):
     if not datos["Alumnos"]:
@@ -25,21 +39,21 @@ def agregar_alumno(datos):
         "Amonestaciones": 0
     }
     datos["Alumnos"].append(nuevo)
+    guardar_datos(datos)
     print("Alumno agregado correctamente.")
-
 
 def modificar_alumno(datos):
     dni = input("Ingrese el DNI del alumno a modificar: ")
     for alumno in datos["Alumnos"]:
         if alumno["DNI"] == dni:
             print("Alumno encontrado.")
-            print("¿Qué desea modificar?")
             for clave in alumno.keys():
                 if clave in ["Notas", "Faltas", "Amonestaciones"]:
-                    continue 
-                nuevo_valor = input(f"{clave} actual: {alumno[clave]} - Nuevo valor (presiona enter para no cambiar): ")
+                    continue
+                nuevo_valor = input(f"{clave} actual: {alumno[clave]} - Nuevo valor (enter para no cambiar): ")
                 if nuevo_valor:
                     alumno[clave] = nuevo_valor
+            guardar_datos(datos)
             print("Datos actualizados.")
             return
     print("Alumno no encontrado.")
@@ -48,29 +62,30 @@ def expulsar_alumno(datos):
     dni = input("Ingrese el DNI del alumno a expulsar: ")
     for i, alumno in enumerate(datos["Alumnos"]):
         if alumno["DNI"] == dni:
-            confirmacion = input(f"¿Está seguro que quiere expulsar a {alumno['Nombre']} {alumno['Apellido']}? (s/n): ")
+            confirmacion = input(f"¿Seguro que quiere expulsar a {alumno['Nombre']} {alumno['Apellido']}? (s/n): ")
             if confirmacion.lower() == 's':
                 datos["Alumnos"].pop(i)
+                guardar_datos(datos)
                 print("Alumno expulsado.")
             else:
                 print("Operación cancelada.")
             return
     print("Alumno no encontrado.")
 
-
 def agregar_nota(datos):
     dni = input("Ingrese el DNI del alumno: ")
     for alumno in datos["Alumnos"]:
         if alumno["DNI"] == dni:
             try:
-                nota = float(input("Ingrese la nota (de 0 a 10): "))
+                nota = float(input("Ingrese la nota (0-10): "))
                 if 0 <= nota <= 10:
                     alumno["Notas"].append(nota)
+                    guardar_datos(datos)
                     print("Nota agregada.")
                 else:
-                    print("Nota inválida.")
+                    print("Nota fuera de rango.")
             except ValueError:
-                print("Debe ingresar un número.")
+                print("Debe ingresar un número válido.")
             return
     print("Alumno no encontrado.")
 
@@ -79,6 +94,7 @@ def agregar_falta(datos):
     for alumno in datos["Alumnos"]:
         if alumno["DNI"] == dni:
             alumno["Faltas"] += 1
+            guardar_datos(datos)
             print("Falta registrada.")
             return
     print("Alumno no encontrado.")
@@ -88,12 +104,14 @@ def agregar_amonestacion(datos):
     for alumno in datos["Alumnos"]:
         if alumno["DNI"] == dni:
             alumno["Amonestaciones"] += 1
+            guardar_datos(datos)
             print("Amonestación registrada.")
             return
     print("Alumno no encontrado.")
 
 def menu():
     while True:
+        datos = cargar_datos()
         print("\n--- Gestión de Alumnos ---")
         print("1. Mostrar alumnos")
         print("2. Agregar alumno")
@@ -125,4 +143,6 @@ def menu():
             break
         else:
             print("Opción no válida. Intente nuevamente.")
+
 menu()
+

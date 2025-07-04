@@ -1,0 +1,16 @@
+{
+    "Alumnos": [
+        {
+            "Nombre": "Maximo Rolando",
+            "Apellido": "Ramos",
+            "DNI": "41052856",
+            "Fecha de nacimiento": "19/05/1998",
+            "Tutor": "Maribel Caceres",
+            "Notas": [
+                8.0
+            ],
+            "Faltas": 1,
+            "Amonestaciones": 1
+        }
+    ]
+}
