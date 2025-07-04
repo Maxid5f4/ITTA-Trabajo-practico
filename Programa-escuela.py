@@ -7,7 +7,7 @@ ARCHIVO = "alumnos.json"
 
 def cargar_datos():
     if os.path.exists(ARCHIVO):
-        if os.path.getsize(ARCHIVO) == 0:  # Si el archivo está vacío
+        if os.path.getsize(ARCHIVO) == 0: 
             return {"Alumnos": []}
         with open(ARCHIVO, "r") as f:
             return json.load(f)
